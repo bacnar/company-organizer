@@ -45,6 +45,7 @@ export default function UsersModal(props) {
     stationData,
     roleData,
     formSubmitCallBack,
+    idValue,
   } = props;
 
   const [name, setName] = React.useState(
@@ -88,8 +89,12 @@ export default function UsersModal(props) {
       setNotification(true);
       setNotificationMessage("Please fill all fields");
       setNotificationColor("danger");
-    } else {
-      formSubmitCallBack(name, station, role);
+
+      setTimeout(() => {
+        setNotification(false);
+      }, 3000);
+    } else if (!setError) {
+      formSubmitCallBack(idValue, name, station, role);
     }
   };
 
@@ -192,8 +197,9 @@ UsersModal.propTypes = {
   headerText: PropTypes.string,
   buttonText: PropTypes.string,
   nameValue: PropTypes.string,
-  stationValue: PropTypes.string,
-  roleValue: PropTypes.string,
+  stationValue: PropTypes.number,
+  roleValue: PropTypes.number,
+  idValue: PropTypes.number,
   stationData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   roleData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   formSubmitCallBack: PropTypes.func,

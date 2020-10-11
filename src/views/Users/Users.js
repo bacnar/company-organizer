@@ -58,8 +58,8 @@ export default function Users() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+
   const [editUser, setEditUser] = React.useState(null);
-  const [deleteUserId, setDeleteUSerId] = React.useState(null);
 
   const [users, setUsers] = React.useState([]);
   const [stations, setStations] = React.useState([]);
@@ -82,15 +82,41 @@ export default function Users() {
   };
 
   const editItem = (item) => {
-    setEditUser(item);
+    setEditUser({
+      id: item[0].key,
+      name: item[1].key,
+      stationId: item[2].key,
+      roleId: item[3].key,
+    });
+
     setOpenEdit(true);
   };
 
-  const deleteItem = (id) => {
-    setDeleteUSerId(id);
+  const openNotification = (message, color) => {
+    setNotificationMessage(message);
+    setNotificationColor(color);
+    setNotification(true);
+
+    setTimeout(() => {
+      setNotification(false);
+    }, 3000);
   };
 
-  const addUser = async (name, station, role) => {
+  const deleteUser = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/users/${id}`);
+
+      openNotification("User deleted", "success");
+
+      getUsers();
+    } catch (error) {
+      console.error("Cannot delete user", error);
+
+      openNotification("Cannot delete user", "danger");
+    }
+  };
+
+  const addUser = async (id, name, station, role) => {
     try {
       await axios.post(`http://localhost:8080/users/`, {
         name: name,
@@ -98,17 +124,36 @@ export default function Users() {
         roleId: role,
       });
 
-      setNotificationMessage("User added");
-      setNotificationColor("success");
+      openNotification(`User ${name} added`, "success");
+
       setOpen(false);
 
-      setNotification(true);
+      getUsers();
     } catch (error) {
       console.error("Cannot add user", error);
-      setNotificationMessage("Cannot add user");
-      setNotificationColor("danger");
 
-      setNotification(true);
+      openNotification("Cannot add user", "danger");
+    }
+  };
+
+  const updateUser = async (id, name, station, role) => {
+    try {
+      await axios.put(`http://localhost:8080/users/`, {
+        id: id,
+        name: name,
+        stationId: station,
+        roleId: role,
+      });
+
+      openNotification(`User ${name} edited`, "success");
+
+      setOpenEdit(false);
+
+      getUsers();
+    } catch (error) {
+      console.error("Cannot edit user", error);
+
+      openNotification("Cannot edit user", "danger");
     }
   };
 
@@ -135,7 +180,7 @@ export default function Users() {
       const response = await axios.get(`http://localhost:8080/roles/`);
       setRoles(response.data);
     } catch (error) {
-      console.error("Cannot get stations", error);
+      console.error("Cannot get roles", error);
     }
   };
 
@@ -143,7 +188,7 @@ export default function Users() {
     getUsers();
     getStations();
     getRoles();
-  }, []);
+  }, [editUser]);
 
   return (
     <div>
@@ -173,15 +218,16 @@ export default function Users() {
             <CardBody>
               <Table
                 tableHeaderColor="primary"
-                tableHead={["Name", "Station", "Role"]}
-                tableData={users.map((value) => [
-                  value.name,
-                  value.station_name,
-                  value.role_name,
+                tableHead={["#", "Name", "Station", "Role"]}
+                tableData={users.map((user) => [
+                  { key: user.id, value: user.id },
+                  { key: user.name, value: user.name },
+                  { key: user.station_id, value: user.station_name },
+                  { key: user.role_id, value: user.role_name },
                 ])}
                 actions={true}
                 editItemCallBack={editItem}
-                deleteItemCallBack={deleteItem}
+                deleteItemCallBack={deleteUser}
               />
             </CardBody>
           </Card>
@@ -225,9 +271,11 @@ export default function Users() {
             buttonText="Save"
             stationData={stations.map((value) => [value.id, value.name])}
             roleData={roles.map((value) => [value.id, value.name])}
+            idValue={editUser != null ? editUser.id : null}
             nameValue={editUser != null ? editUser.name : null}
-            stationValue={editUser != null ? editUser.station : null}
-            roleValue={editUser != null ? editUser.role : null}
+            stationValue={editUser != null ? editUser.stationId : null}
+            roleValue={editUser != null ? editUser.roleId : null}
+            formSubmitCallBack={updateUser}
           />
         </Fade>
       </Modal>
@@ -236,8 +284,7 @@ export default function Users() {
         color={notificationColor}
         message={notificationMessage}
         open={notification}
-        closeNotification={() => setNotification(false)}
-        close
+        close={false}
       />
     </div>
   );

@@ -57,7 +57,7 @@ export default function EditTableActions(props) {
 }
 
 EditTableActions.propTypes = {
-  editItem: PropTypes.object,
+  editItem: PropTypes.any,
   deleteItemId: PropTypes.number,
   editItemCallBack: PropTypes.func,
   deleteItemCallBack: PropTypes.func,

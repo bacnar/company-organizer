@@ -68,7 +68,7 @@ export default function CustomTable(props) {
                       key={key}
                       style={capitalize}
                     >
-                      {prop}
+                      {prop.value}
                     </TableCell>
                   );
                 })}
@@ -76,13 +76,8 @@ export default function CustomTable(props) {
                   <EditTableActions
                     editItemCallBack={editItemCallBack}
                     deleteItemCallBack={deleteItemCallBack}
-                    editItem={{
-                      id: 12,
-                      name: "test",
-                      station: "cut",
-                      role: "director",
-                    }}
-                    deleteItemId={22}
+                    editItem={prop}
+                    deleteItemId={prop[0].key}
                   />
                 ) : null}
               </TableRow>
@@ -110,7 +105,7 @@ CustomTable.propTypes = {
     "gray",
   ]),
   tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
+  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   actions: PropTypes.bool,
   editItemCallBack: PropTypes.func,
   deleteItemCallBack: PropTypes.func,
