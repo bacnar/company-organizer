@@ -9,64 +9,82 @@ import IconButton from "@material-ui/core/IconButton";
 import Close from "@material-ui/icons/Close";
 // core components
 import styles from "assets/jss/material-dashboard-react/components/snackbarContentStyle.js";
+import { connect } from "react-redux";
+import { clearSnackbar } from "actions/Snackbar";
 
 const useStyles = makeStyles(styles);
 
-export default function Snackbar(props) {
+const Snackbar = (props) => {
   const classes = useStyles();
-  const { message, color, close, icon, place, open } = props;
-  var action = [];
+
+  const {
+    snackbarOpen,
+    snackbarMessage,
+    snackbarColor,
+    clearSnackbar,
+    iconSnackbar,
+  } = props;
+
   const messageClasses = classNames({
-    [classes.iconMessage]: icon !== undefined,
+    [classes.iconMessage]: iconSnackbar !== undefined,
   });
-  if (close !== undefined) {
-    action = [
-      <IconButton
-        className={classes.iconButton}
-        key="close"
-        aria-label="Close"
-        color="inherit"
-        onClick={() => props.closeNotification()}
-      >
-        <Close className={classes.close} />
-      </IconButton>,
-    ];
+
+  function handleClose() {
+    clearSnackbar();
   }
+
+  const action = [
+    <IconButton
+      className={classes.iconButton}
+      key="close"
+      aria-label="Close"
+      color="inherit"
+      onClick={() => handleClose()}
+    >
+      <Close className={classes.close} />
+    </IconButton>,
+  ];
+
   return (
     <Snack
       anchorOrigin={{
-        vertical: place.indexOf("t") === -1 ? "bottom" : "top",
-        horizontal:
-          place.indexOf("l") !== -1
-            ? "left"
-            : place.indexOf("c") !== -1
-            ? "center"
-            : "right",
+        vertical: "top",
+        horizontal: "right",
       }}
-      open={open}
+      open={snackbarOpen}
       message={
         <div>
-          {icon !== undefined ? <props.icon className={classes.icon} /> : null}
-          <span className={messageClasses}>{message}</span>
+          {iconSnackbar !== undefined ? (
+            <props.icon className={classes.iconSnackbar} />
+          ) : null}
+          <span className={messageClasses}>{snackbarMessage}</span>
         </div>
       }
       action={action}
+      autoHideDuration={3000}
+      onClose={handleClose}
       ContentProps={{
         classes: {
-          root: classes.root + " " + classes[color],
+          root: classes.root + " " + classes[snackbarColor],
           message: classes.message,
         },
       }}
     />
   );
-}
+};
 
 Snackbar.propTypes = {
-  message: PropTypes.node.isRequired,
-  color: PropTypes.oneOf(["info", "success", "warning", "danger", "primary"]),
-  close: PropTypes.bool,
-  icon: PropTypes.object,
-  place: PropTypes.oneOf(["tl", "tr", "tc", "br", "bl", "bc"]),
-  open: PropTypes.bool,
-  closeNotification: PropTypes.func,
+  iconSnackbar: PropTypes.object,
+  clearSnackbar: PropTypes.func,
+  snackbarOpen: PropTypes.bool.isRequired,
+  snackbarMessage: PropTypes.string.isRequired,
+  snackbarColor: PropTypes.string.isRequired,
 };
+
+const mapStateToProps = ({ snackbar }) => snackbar;
+
+const mapDispatchToProps = {
+  clearSnackbar,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Snackbar);

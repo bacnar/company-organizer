@@ -18,6 +18,8 @@ import styles from "assets/jss/material-dashboard-react/layouts/adminStyle.js";
 import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/reactlogo.png";
 
+import Snackbar from "components/Snackbar/Snackbar.js";
+
 let ps;
 
 const switchRoutes = (
@@ -128,6 +130,7 @@ export default function Admin({ ...rest }) {
           fixedClasses={fixedClasses}
         />
       </div>
+      <Snackbar />
     </div>
   );
 }

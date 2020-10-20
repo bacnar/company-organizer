@@ -6,9 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
-// @material-ui/icons
-import Clear from "@material-ui/icons/Clear";
-import Check from "@material-ui/icons/Check";
+import FormHelperText from "@material-ui/core/FormHelperText";
 // core components
 import styles from "assets/jss/material-dashboard-react/components/customInputStyle.js";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -30,6 +28,7 @@ export default function CustomSelect(props) {
     error,
     success,
     selectData,
+    errorMessage,
   } = props;
 
   const labelClasses = classNames({
@@ -45,6 +44,7 @@ export default function CustomSelect(props) {
     <FormControl
       {...formControlProps}
       className={formControlProps.className + " " + classes.formControl}
+      error={error ? true : false}
     >
       {labelText !== undefined ? (
         <InputLabel
@@ -73,9 +73,9 @@ export default function CustomSelect(props) {
         })}
       </Select>
       {error ? (
-        <Clear className={classes.feedback + " " + classes.labelRootError} />
-      ) : success ? (
-        <Check className={classes.feedback + " " + classes.labelRootSuccess} />
+        <FormHelperText id="component-error-text">
+          {errorMessage}
+        </FormHelperText>
       ) : null}
     </FormControl>
   );
@@ -89,5 +89,6 @@ CustomSelect.propTypes = {
   formControlProps: PropTypes.object,
   error: PropTypes.bool,
   success: PropTypes.bool,
+  errorMessage: PropTypes.string,
   selectData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
 };

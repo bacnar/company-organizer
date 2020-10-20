@@ -13,24 +13,7 @@ import Button from "components/CustomButtons/Button.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import CustomSelect from "components/CustomSelect/CustomSelect";
 import Snackbar from "components/Snackbar/Snackbar.js";
-
-const styles = {
-  cardTitleWhite: {
-    color: "#FFFFFF",
-    marginTop: "0px",
-    minHeight: "auto",
-    fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: "3px",
-    textDecoration: "none",
-    "& small": {
-      color: "#777",
-      fontSize: "65%",
-      fontWeight: "400",
-      lineHeight: "1",
-    },
-  },
-};
+import styles from "assets/jss/material-dashboard-react/components/tablesModalStyle.js";
 
 const useStyles = makeStyles(styles);
 
@@ -39,28 +22,37 @@ export default function UsersModal(props) {
   const {
     headerText,
     buttonText,
-    nameValue,
-    stationValue,
-    roleValue,
     stationData,
     roleData,
     formSubmitCallBack,
-    idValue,
+    user,
   } = props;
 
-  const [name, setName] = React.useState(
-    nameValue === undefined ? "" : nameValue
-  );
-  const [role, setRole] = React.useState(
-    roleValue === undefined ? "" : roleValue
-  );
+  const [name, setName] = React.useState(user === undefined ? "" : user.name);
+  const [role, setRole] = React.useState(user === undefined ? "" : user.roleId);
   const [station, setStation] = React.useState(
-    stationValue === undefined ? "" : stationValue
+    user === undefined ? "" : user.stationId
+  );
+  const [username, setUsername] = React.useState(
+    user === undefined ? "" : user.username
+  );
+  const [email, setEmail] = React.useState(
+    user === undefined ? "" : user.email
+  );
+  const [password, setPassword] = React.useState(
+    user === undefined ? "" : user.password
+  );
+  const [confirmPassword, setConfirmPassword] = React.useState(
+    user === undefined ? "" : user.password
   );
 
   const [nameError, setNameError] = React.useState(false);
   const [stationError, setStationError] = React.useState(false);
   const [roleError, setRoleError] = React.useState(false);
+  const [usernameError, setUsernameError] = React.useState(false);
+  const [emailError, setEmailError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
 
   const [notification, setNotification] = React.useState(false);
   const [notificationMessage, setNotificationMessage] = React.useState("");
@@ -85,16 +77,47 @@ export default function UsersModal(props) {
       setError = true;
     }
 
+    if (username.trim() === "") {
+      setUsernameError(true);
+      setError = true;
+    }
+
+    if (email.trim() === "") {
+      setEmailError(true);
+      setError = true;
+    }
+
+    if (password.trim() === "") {
+      setPasswordError(true);
+      setError = true;
+    }
+
+    if (
+      confirmPassword.trim() === "" ||
+      password.trim() !== confirmPassword.trim()
+    ) {
+      setConfirmPasswordError(true);
+      setError = true;
+    }
+
     if (setError && !notification) {
       setNotification(true);
-      setNotificationMessage("Please fill all fields");
+      setNotificationMessage("Did you filled all fields properly?");
       setNotificationColor("danger");
 
       setTimeout(() => {
         setNotification(false);
       }, 3000);
     } else if (!setError) {
-      formSubmitCallBack(idValue, name, station, role);
+      formSubmitCallBack(
+        user.id,
+        name,
+        station,
+        role,
+        username,
+        email,
+        password
+      );
     }
   };
 
@@ -114,6 +137,26 @@ export default function UsersModal(props) {
     if (id === "role") {
       setRole(target.value);
       setRoleError(false);
+    }
+
+    if (id === "username") {
+      setUsername(target.value);
+      setUsernameError(false);
+    }
+
+    if (id === "email") {
+      setEmail(target.value);
+      setEmailError(false);
+    }
+
+    if (id === "password") {
+      setPassword(target.value);
+      setPasswordError(false);
+    }
+
+    if (id === "confirmPassword") {
+      setConfirmPassword(target.value);
+      setConfirmPasswordError(false);
     }
 
     setNotification(false);
@@ -140,6 +183,69 @@ export default function UsersModal(props) {
                     value: name,
                   }}
                   error={nameError}
+                  errorMessage="Please enter user name"
+                />
+              </GridItem>
+              <GridItem>
+                <CustomInput
+                  labelText="Username"
+                  id="username"
+                  formControlProps={{
+                    fullWidth: true,
+                  }}
+                  inputProps={{
+                    onChange: (event) => handleChange(event, "username"),
+                    value: username,
+                  }}
+                  error={usernameError}
+                  errorMessage="Please enter user username"
+                />
+              </GridItem>
+              <GridItem>
+                <CustomInput
+                  labelText="Email"
+                  id="email"
+                  formControlProps={{
+                    fullWidth: true,
+                  }}
+                  inputProps={{
+                    onChange: (event) => handleChange(event, "email"),
+                    value: email,
+                  }}
+                  error={emailError}
+                  errorMessage="Please enter user email"
+                />
+              </GridItem>
+              <GridItem>
+                <CustomInput
+                  labelText="Password"
+                  id="password"
+                  formControlProps={{
+                    fullWidth: true,
+                  }}
+                  inputProps={{
+                    onChange: (event) => handleChange(event, "password"),
+                    value: password,
+                    type: "password",
+                  }}
+                  error={passwordError}
+                  errorMessage="Please enter user password"
+                />
+              </GridItem>
+              <GridItem>
+                <CustomInput
+                  labelText="Confirm password"
+                  id="confirmPassword"
+                  formControlProps={{
+                    fullWidth: true,
+                  }}
+                  inputProps={{
+                    onChange: (event) => handleChange(event, "confirmPassword"),
+                    value: confirmPassword,
+                    type: "password",
+                  }}
+                  error={confirmPasswordError}
+                  errorMessage="Please enter correct password"
                 />
               </GridItem>
               <GridItem>
@@ -155,6 +261,7 @@ export default function UsersModal(props) {
                     value: station,
                   }}
                   error={stationError}
+                  errorMessage="Please select station"
                 />
               </GridItem>
               <GridItem>
@@ -170,6 +277,7 @@ export default function UsersModal(props) {
                     value: role,
                   }}
                   error={roleError}
+                  errorMessage="Please select role"
                 />
               </GridItem>
             </GridContainer>
@@ -196,10 +304,7 @@ export default function UsersModal(props) {
 UsersModal.propTypes = {
   headerText: PropTypes.string,
   buttonText: PropTypes.string,
-  nameValue: PropTypes.string,
-  stationValue: PropTypes.number,
-  roleValue: PropTypes.number,
-  idValue: PropTypes.number,
+  user: PropTypes.object,
   stationData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   roleData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   formSubmitCallBack: PropTypes.func,

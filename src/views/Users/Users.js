@@ -15,46 +15,14 @@ import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import axios from "axios";
-import Snackbar from "components/Snackbar/Snackbar.js";
+import styles from "assets/jss/material-dashboard-react/views/userStyle.js";
 
-const styles = {
-  cardCategoryWhite: {
-    "&,& a,& a:hover,& a:focus": {
-      color: "rgba(255,255,255,.62)",
-      margin: "0",
-      fontSize: "14px",
-      marginTop: "0",
-      marginBottom: "0",
-    },
-    "& a,& a:hover,& a:focus": {
-      color: "#FFFFFF",
-    },
-  },
-  cardTitleWhite: {
-    color: "#FFFFFF",
-    marginTop: "0px",
-    minHeight: "auto",
-    fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: "3px",
-    textDecoration: "none",
-    "& small": {
-      color: "#777",
-      fontSize: "65%",
-      fontWeight: "400",
-      lineHeight: "1",
-    },
-  },
-  modal: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-};
+import { showErrorSnackbar } from "actions/Snackbar";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(styles);
 
-export default function Users() {
+const Users = ({ dispatch }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
@@ -64,10 +32,6 @@ export default function Users() {
   const [users, setUsers] = React.useState([]);
   const [stations, setStations] = React.useState([]);
   const [roles, setRoles] = React.useState([]);
-
-  const [notification, setNotification] = React.useState(false);
-  const [notificationMessage, setNotificationMessage] = React.useState("");
-  const [notificationColor, setNotificationColor] = React.useState("info");
 
   const openModal = () => {
     setOpen(true);
@@ -87,19 +51,16 @@ export default function Users() {
       name: item[1].key,
       stationId: item[2].key,
       roleId: item[3].key,
+      username: item[4].key,
+      email: item[5].key,
+      password: item[6].key,
     });
 
     setOpenEdit(true);
   };
 
   const openNotification = (message, color) => {
-    setNotificationMessage(message);
-    setNotificationColor(color);
-    setNotification(true);
-
-    setTimeout(() => {
-      setNotification(false);
-    }, 3000);
+    //this.snackbarRef.current.openSnackBar(message, color);
   };
 
   const deleteUser = async (id) => {
@@ -110,18 +71,29 @@ export default function Users() {
 
       getUsers();
     } catch (error) {
-      console.error("Cannot delete user", error);
+      console.error("Cannot delete user, response error:", error.response.data);
 
       openNotification("Cannot delete user", "danger");
     }
   };
 
-  const addUser = async (id, name, station, role) => {
+  const addUser = async (
+    id,
+    name,
+    station,
+    role,
+    username,
+    email,
+    password
+  ) => {
     try {
       await axios.post(`http://localhost:8080/users/`, {
         name: name,
         stationId: station,
         roleId: role,
+        username: username,
+        email: email,
+        password: password,
       });
 
       openNotification(`User ${name} added`, "success");
@@ -130,19 +102,30 @@ export default function Users() {
 
       getUsers();
     } catch (error) {
-      console.error("Cannot add user", error);
+      console.error("Cannot add user, response error:", error.response.data);
 
       openNotification("Cannot add user", "danger");
     }
   };
 
-  const updateUser = async (id, name, station, role) => {
+  const updateUser = async (
+    id,
+    name,
+    station,
+    role,
+    username,
+    email,
+    password
+  ) => {
     try {
       await axios.put(`http://localhost:8080/users/`, {
         id: id,
         name: name,
         stationId: station,
         roleId: role,
+        username: username,
+        email: email,
+        password: password,
       });
 
       openNotification(`User ${name} edited`, "success");
@@ -151,18 +134,19 @@ export default function Users() {
 
       getUsers();
     } catch (error) {
-      console.error("Cannot edit user", error);
+      console.error("Cannot edit user, response error:", error.response.data);
 
       openNotification("Cannot edit user", "danger");
     }
   };
 
   const getUsers = async () => {
+    dispatch(showErrorSnackbar("asdasd"))
     try {
       const response = await axios.get(`http://localhost:8080/users/`);
       setUsers(response.data);
     } catch (error) {
-      console.error("Cannot get users", error);
+      console.error("Cannot get users", error.response.data);
     }
   };
 
@@ -171,7 +155,10 @@ export default function Users() {
       const response = await axios.get(`http://localhost:8080/stations/`);
       setStations(response.data);
     } catch (error) {
-      console.error("Cannot get stations", error);
+      console.error(
+        "Cannot get stations, response error:",
+        error.response.data
+      );
     }
   };
 
@@ -180,7 +167,7 @@ export default function Users() {
       const response = await axios.get(`http://localhost:8080/roles/`);
       setRoles(response.data);
     } catch (error) {
-      console.error("Cannot get roles", error);
+      console.error("Cannot get roles, response error:", error.response.data);
     }
   };
 
@@ -218,12 +205,23 @@ export default function Users() {
             <CardBody>
               <Table
                 tableHeaderColor="primary"
-                tableHead={["#", "Name", "Station", "Role"]}
+                tableHead={[
+                  "#",
+                  "Name",
+                  "Station",
+                  "Role",
+                  "Username",
+                  "Email",
+                  "Password",
+                ]}
                 tableData={users.map((user) => [
                   { key: user.id, value: user.id },
                   { key: user.name, value: user.name },
                   { key: user.station_id, value: user.station_name },
                   { key: user.role_id, value: user.role_name },
+                  { key: user.username, value: user.username },
+                  { key: user.email, value: user.email },
+                  { key: user.password, value: user.password },
                 ])}
                 actions={true}
                 editItemCallBack={editItem}
@@ -271,21 +269,13 @@ export default function Users() {
             buttonText="Save"
             stationData={stations.map((value) => [value.id, value.name])}
             roleData={roles.map((value) => [value.id, value.name])}
-            idValue={editUser != null ? editUser.id : null}
-            nameValue={editUser != null ? editUser.name : null}
-            stationValue={editUser != null ? editUser.stationId : null}
-            roleValue={editUser != null ? editUser.roleId : null}
+            user={editUser != null ? editUser : null}
             formSubmitCallBack={updateUser}
           />
         </Fade>
       </Modal>
-      <Snackbar
-        place="tr"
-        color={notificationColor}
-        message={notificationMessage}
-        open={notification}
-        close={false}
-      />
     </div>
   );
-}
+};
+
+export default connect()(Users);
