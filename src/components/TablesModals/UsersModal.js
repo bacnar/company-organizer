@@ -12,12 +12,13 @@ import CardFooter from "components/Card/CardFooter.js";
 import Button from "components/CustomButtons/Button.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import CustomSelect from "components/CustomSelect/CustomSelect";
-import Snackbar from "components/Snackbar/Snackbar.js";
 import styles from "assets/jss/material-dashboard-react/components/tablesModalStyle.js";
+import { showErrorSnackbar } from "actions/Snackbar";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(styles);
 
-export default function UsersModal(props) {
+const UsersModal = (props) => {
   const classes = useStyles();
   const {
     headerText,
@@ -26,6 +27,7 @@ export default function UsersModal(props) {
     roleData,
     formSubmitCallBack,
     user,
+    showErrorSnackbar,
   } = props;
 
   const [name, setName] = React.useState(user === undefined ? "" : user.name);
@@ -53,10 +55,6 @@ export default function UsersModal(props) {
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = React.useState(false);
-
-  const [notification, setNotification] = React.useState(false);
-  const [notificationMessage, setNotificationMessage] = React.useState("");
-  const [notificationColor, setNotificationColor] = React.useState("info");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -100,15 +98,9 @@ export default function UsersModal(props) {
       setError = true;
     }
 
-    if (setError && !notification) {
-      setNotification(true);
-      setNotificationMessage("Did you filled all fields properly?");
-      setNotificationColor("danger");
-
-      setTimeout(() => {
-        setNotification(false);
-      }, 3000);
-    } else if (!setError) {
+    if (setError) {
+      showErrorSnackbar("Did you filled all fields properly?");
+    } else {
       formSubmitCallBack(
         user.id,
         name,
@@ -158,8 +150,6 @@ export default function UsersModal(props) {
       setConfirmPassword(target.value);
       setConfirmPasswordError(false);
     }
-
-    setNotification(false);
   };
 
   return (
@@ -289,17 +279,9 @@ export default function UsersModal(props) {
           </CardFooter>
         </form>
       </Card>
-      <Snackbar
-        place="tr"
-        color={notificationColor}
-        message={notificationMessage}
-        open={notification}
-        closeNotification={() => setNotification(false)}
-        close
-      />
     </GridItem>
   );
-}
+};
 
 UsersModal.propTypes = {
   headerText: PropTypes.string,
@@ -308,4 +290,11 @@ UsersModal.propTypes = {
   stationData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   roleData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   formSubmitCallBack: PropTypes.func,
+  showErrorSnackbar: PropTypes.func,
 };
+
+const mapDispatchToProps = {
+  showErrorSnackbar,
+};
+
+export default connect(null, mapDispatchToProps)(UsersModal);

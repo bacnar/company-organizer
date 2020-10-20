@@ -16,14 +16,18 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import axios from "axios";
 import styles from "assets/jss/material-dashboard-react/views/userStyle.js";
+import PropTypes from "prop-types";
 
-import { showErrorSnackbar } from "actions/Snackbar";
+import { showErrorSnackbar, showSuccessSnackbar } from "actions/Snackbar";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles(styles);
 
-const Users = ({ dispatch }) => {
+const Users = (props) => {
   const classes = useStyles();
+
+  const { showErrorSnackbar, showSuccessSnackbar } = props;
+
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
 
@@ -59,21 +63,17 @@ const Users = ({ dispatch }) => {
     setOpenEdit(true);
   };
 
-  const openNotification = (message, color) => {
-    //this.snackbarRef.current.openSnackBar(message, color);
-  };
-
   const deleteUser = async (id) => {
     try {
       await axios.delete(`http://localhost:8080/users/${id}`);
 
-      openNotification("User deleted", "success");
+      showSuccessSnackbar("User deleted");
 
       getUsers();
     } catch (error) {
       console.error("Cannot delete user, response error:", error.response.data);
 
-      openNotification("Cannot delete user", "danger");
+      showErrorSnackbar("Cannot delete user");
     }
   };
 
@@ -96,7 +96,7 @@ const Users = ({ dispatch }) => {
         password: password,
       });
 
-      openNotification(`User ${name} added`, "success");
+      showSuccessSnackbar(`User ${name} added`);
 
       setOpen(false);
 
@@ -104,7 +104,7 @@ const Users = ({ dispatch }) => {
     } catch (error) {
       console.error("Cannot add user, response error:", error.response.data);
 
-      openNotification("Cannot add user", "danger");
+      showErrorSnackbar("Cannot add user");
     }
   };
 
@@ -128,7 +128,7 @@ const Users = ({ dispatch }) => {
         password: password,
       });
 
-      openNotification(`User ${name} edited`, "success");
+      showSuccessSnackbar(`User ${name} edited`);
 
       setOpenEdit(false);
 
@@ -136,17 +136,17 @@ const Users = ({ dispatch }) => {
     } catch (error) {
       console.error("Cannot edit user, response error:", error.response.data);
 
-      openNotification("Cannot edit user", "danger");
+      showErrorSnackbar("Cannot edit user");
     }
   };
 
   const getUsers = async () => {
-    dispatch(showErrorSnackbar("asdasd"))
     try {
       const response = await axios.get(`http://localhost:8080/users/`);
       setUsers(response.data);
     } catch (error) {
       console.error("Cannot get users", error.response.data);
+      showErrorSnackbar("Cannot get users");
     }
   };
 
@@ -159,6 +159,7 @@ const Users = ({ dispatch }) => {
         "Cannot get stations, response error:",
         error.response.data
       );
+      showErrorSnackbar("Cannot get stations");
     }
   };
 
@@ -168,6 +169,7 @@ const Users = ({ dispatch }) => {
       setRoles(response.data);
     } catch (error) {
       console.error("Cannot get roles, response error:", error.response.data);
+      showErrorSnackbar("Cannot get roles");
     }
   };
 
@@ -278,4 +280,14 @@ const Users = ({ dispatch }) => {
   );
 };
 
-export default connect()(Users);
+Users.propTypes = {
+  showErrorSnackbar: PropTypes.func,
+  showSuccessSnackbar: PropTypes.func,
+};
+
+const mapDispatchToProps = {
+  showErrorSnackbar,
+  showSuccessSnackbar,
+};
+
+export default connect(null, mapDispatchToProps)(Users);
