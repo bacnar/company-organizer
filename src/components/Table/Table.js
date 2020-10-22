@@ -25,7 +25,7 @@ export default function CustomTable(props) {
     tableHeaderColor,
     actions,
     editItemCallBack,
-    deleteItemCallBack,
+    deleteItemAction,
   } = props;
 
   return (
@@ -75,7 +75,7 @@ export default function CustomTable(props) {
                 {actions ? (
                   <EditTableActions
                     editItemCallBack={editItemCallBack}
-                    deleteItemCallBack={deleteItemCallBack}
+                    deleteItemAction={deleteItemAction}
                     editItem={prop}
                     deleteItemId={prop[0].key}
                   />
@@ -108,5 +108,5 @@ CustomTable.propTypes = {
   tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   actions: PropTypes.bool,
   editItemCallBack: PropTypes.func,
-  deleteItemCallBack: PropTypes.func,
+  deleteItemAction: PropTypes.func,
 };

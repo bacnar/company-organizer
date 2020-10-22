@@ -14,11 +14,8 @@ import AddBox from "@material-ui/icons/AddBox";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
-import axios from "axios";
 import styles from "assets/jss/material-dashboard-react/views/userStyle.js";
 import PropTypes from "prop-types";
-
-import { showErrorSnackbar, showSuccessSnackbar } from "actions/Snackbar";
 import { fetchRoles } from "actions/Role";
 import { fetchStations } from "actions/Station";
 import { fetchUsers, addUser, deleteUser, updateUser } from "actions/User";
@@ -30,17 +27,15 @@ const Users = (props) => {
   const classes = useStyles();
 
   const {
-    showErrorSnackbar,
-    showSuccessSnackbar,
     fetchRoles,
     fetchStations,
     fetchUsers,
     users,
     roles,
     stations,
-    //addUser,
-    //deleteUser,
-    //updateUser,
+    addUser,
+    deleteUser,
+    updateUser,
   } = props;
 
   const [open, setOpen] = React.useState(false);
@@ -72,83 +67,6 @@ const Users = (props) => {
     });
 
     setOpenEdit(true);
-  };
-
-  const deleteUser = async (id) => {
-    try {
-      await axios.delete(`http://localhost:8080/users/${id}`);
-
-      showSuccessSnackbar("User deleted");
-
-      //getUsers();
-    } catch (error) {
-      console.error("Cannot delete user, response error:", error.response.data);
-
-      showErrorSnackbar("Cannot delete user");
-    }
-  };
-
-  const addUser = async (
-    id,
-    name,
-    station,
-    role,
-    username,
-    email,
-    password
-  ) => {
-    try {
-      await axios.post(`http://localhost:8080/users/`, {
-        name: name,
-        stationId: station,
-        roleId: role,
-        username: username,
-        email: email,
-        password: password,
-      });
-
-      showSuccessSnackbar(`User ${name} added`);
-
-      setOpen(false);
-
-      //getUsers();
-    } catch (error) {
-      console.error("Cannot add user, response error:", error.response.data);
-
-      showErrorSnackbar("Cannot add user");
-    }
-  };
-
-  const updateUser = async (
-    id,
-    name,
-    station,
-    role,
-    username,
-    email,
-    password
-  ) => {
-    try {
-      await axios.put(`http://localhost:8080/users/`, {
-        id: id,
-        name: name,
-        stationId: station,
-        roleId: role,
-        username: username,
-        email: email,
-        password: password,
-      });
-
-      showSuccessSnackbar(`User ${name} edited`);
-
-      setOpenEdit(false);
-
-      //getUsers();
-    } catch (error) {
-      console.error("Cannot edit user, response error:", error.response.data);
-
-      showErrorSnackbar("Cannot edit user");
-    }
   };
 
   React.useEffect(() => {
@@ -205,7 +123,7 @@ const Users = (props) => {
                 ])}
                 actions={true}
                 editItemCallBack={editItem}
-                deleteItemCallBack={deleteUser}
+                deleteItemAction={deleteUser}
               />
             </CardBody>
           </Card>
@@ -228,7 +146,7 @@ const Users = (props) => {
             buttonText="Add user"
             stationData={stations.map((value) => [value.id, value.name])}
             roleData={roles.map((value) => [value.id, value.name])}
-            formSubmitCallBack={addUser}
+            formSubmitAction={addUser}
           />
         </Fade>
       </Modal>
@@ -250,7 +168,7 @@ const Users = (props) => {
             stationData={stations.map((value) => [value.id, value.name])}
             roleData={roles.map((value) => [value.id, value.name])}
             user={editUser != null ? editUser : null}
-            formSubmitCallBack={updateUser}
+            formSubmitAction={updateUser}
           />
         </Fade>
       </Modal>
@@ -259,8 +177,6 @@ const Users = (props) => {
 };
 
 Users.propTypes = {
-  showErrorSnackbar: PropTypes.func,
-  showSuccessSnackbar: PropTypes.func,
   fetchRoles: PropTypes.func,
   fetchStations: PropTypes.func,
   fetchUsers: PropTypes.func,
@@ -281,8 +197,6 @@ const mapStateToProps = ({ user, station, role }) => {
 };
 
 const mapDispatchToProps = {
-  showErrorSnackbar,
-  showSuccessSnackbar,
   fetchRoles,
   fetchStations,
   fetchUsers,

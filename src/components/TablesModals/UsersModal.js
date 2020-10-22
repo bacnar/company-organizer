@@ -25,7 +25,7 @@ const UsersModal = (props) => {
     buttonText,
     stationData,
     roleData,
-    formSubmitCallBack,
+    formSubmitAction,
     user,
     showErrorSnackbar,
   } = props;
@@ -101,15 +101,19 @@ const UsersModal = (props) => {
     if (setError) {
       showErrorSnackbar("Did you filled all fields properly?");
     } else {
-      formSubmitCallBack(
-        user.id,
-        name,
-        station,
-        role,
-        username,
-        email,
-        password
-      );
+      if (user === undefined) {
+        formSubmitAction(name, station, role, username, email, password);
+      } else {
+        formSubmitAction(
+          user.id,
+          name,
+          station,
+          role,
+          username,
+          email,
+          password
+        );
+      }
     }
   };
 
@@ -289,7 +293,7 @@ UsersModal.propTypes = {
   user: PropTypes.object,
   stationData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   roleData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
-  formSubmitCallBack: PropTypes.func,
+  formSubmitAction: PropTypes.func,
   showErrorSnackbar: PropTypes.func,
 };
 

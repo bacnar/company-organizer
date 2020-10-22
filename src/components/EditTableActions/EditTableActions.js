@@ -10,19 +10,15 @@ import Delete from "@material-ui/icons/Delete";
 // core components
 import taskStyles from "assets/jss/material-dashboard-react/components/tasksStyle.js";
 import tableStyles from "assets/jss/material-dashboard-react/components/tableStyle.js";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(taskStyles);
 const useTableStyles = makeStyles(tableStyles);
 
-export default function EditTableActions(props) {
+const EditTableActions = (props) => {
   const classes = useStyles();
   const tableClasses = useTableStyles();
-  const {
-    editItemCallBack,
-    deleteItemCallBack,
-    editItem,
-    deleteItemId,
-  } = props;
+  const { editItemCallBack, deleteItemAction, editItem, deleteItemId } = props;
 
   return (
     <TableCell align="right" className={tableClasses.tableCell}>
@@ -47,7 +43,7 @@ export default function EditTableActions(props) {
       >
         <IconButton
           aria-label="Delete"
-          onClick={() => deleteItemCallBack(deleteItemId)}
+          onClick={() => deleteItemAction(deleteItemId)}
         >
           <Delete className={classes.close} />
         </IconButton>
@@ -60,5 +56,7 @@ EditTableActions.propTypes = {
   editItem: PropTypes.any,
   deleteItemId: PropTypes.number,
   editItemCallBack: PropTypes.func,
-  deleteItemCallBack: PropTypes.func,
+  deleteItemAction: PropTypes.func,
 };
+
+export default connect()(EditTableActions);

@@ -36,14 +36,13 @@ export function* watchFetchUsers() {
 function* addUser({ payload }) {
   try {
     yield call(
-      addUserRequest(
-        payload.name,
-        payload.stationId,
-        payload.roleId,
-        payload.username,
-        payload.email,
-        payload.password
-      )
+      addUserRequest,
+      payload.name,
+      payload.stationId,
+      payload.roleId,
+      payload.username,
+      payload.email,
+      payload.password
     );
     yield put(addUserSuccess());
     yield put(showSuccessSnackbar(`User ${payload.name} successfully added.`));
@@ -60,7 +59,7 @@ export function* watchAddUser() {
 
 function* deleteUser({ payload }) {
   try {
-    yield call(deleteUserRequest(payload));
+    yield call(deleteUserRequest, payload);
     yield put(deleteUserSuccess());
     yield put(showSuccessSnackbar(`User successfully deleted.`));
     yield put(fetchUsersAction());
@@ -77,15 +76,14 @@ export function* watchDeleteUser() {
 function* updateUser({ payload }) {
   try {
     yield call(
-      updateUserRequest(
-        payload.id,
-        payload.name,
-        payload.stationId,
-        payload.roleId,
-        payload.username,
-        payload.email,
-        payload.password
-      )
+      updateUserRequest,
+      payload.id,
+      payload.name,
+      payload.stationId,
+      payload.roleId,
+      payload.username,
+      payload.email,
+      payload.password
     );
     yield put(updateUserSuccess());
     yield put(
