@@ -20,17 +20,24 @@ import ReactDOM from "react-dom";
 import { createBrowserHistory } from "history";
 import { Router, Route, Switch, Redirect } from "react-router-dom";
 import { Provider } from "react-redux";
-import { createStore } from "redux";
+import createSagaMiddleware from "redux-saga";
+import { createStore, applyMiddleware } from "redux";
 import reducers from "./reducers";
+import { logger } from "redux-logger";
+import rootSaga from "./sagas";
 
 // core components
 import Admin from "layouts/Admin.js";
 
 import "assets/css/material-dashboard-react.css?v=1.9.0";
 
+const sagaMiddleware = createSagaMiddleware();
+
 const hist = createBrowserHistory();
 
-const store = createStore(reducers);
+const store = createStore(reducers, applyMiddleware(sagaMiddleware, logger));
+
+sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(
   <Provider store={store}>

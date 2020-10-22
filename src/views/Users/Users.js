@@ -19,6 +19,9 @@ import styles from "assets/jss/material-dashboard-react/views/userStyle.js";
 import PropTypes from "prop-types";
 
 import { showErrorSnackbar, showSuccessSnackbar } from "actions/Snackbar";
+import { fetchRoles } from "actions/Role";
+import { fetchStations } from "actions/Station";
+import { fetchUsers, addUser, deleteUser, updateUser } from "actions/User";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles(styles);
@@ -26,16 +29,24 @@ const useStyles = makeStyles(styles);
 const Users = (props) => {
   const classes = useStyles();
 
-  const { showErrorSnackbar, showSuccessSnackbar } = props;
+  const {
+    showErrorSnackbar,
+    showSuccessSnackbar,
+    fetchRoles,
+    fetchStations,
+    fetchUsers,
+    users,
+    roles,
+    stations,
+    //addUser,
+    //deleteUser,
+    //updateUser,
+  } = props;
 
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
 
   const [editUser, setEditUser] = React.useState(null);
-
-  const [users, setUsers] = React.useState([]);
-  const [stations, setStations] = React.useState([]);
-  const [roles, setRoles] = React.useState([]);
 
   const openModal = () => {
     setOpen(true);
@@ -69,7 +80,7 @@ const Users = (props) => {
 
       showSuccessSnackbar("User deleted");
 
-      getUsers();
+      //getUsers();
     } catch (error) {
       console.error("Cannot delete user, response error:", error.response.data);
 
@@ -100,7 +111,7 @@ const Users = (props) => {
 
       setOpen(false);
 
-      getUsers();
+      //getUsers();
     } catch (error) {
       console.error("Cannot add user, response error:", error.response.data);
 
@@ -132,7 +143,7 @@ const Users = (props) => {
 
       setOpenEdit(false);
 
-      getUsers();
+      //getUsers();
     } catch (error) {
       console.error("Cannot edit user, response error:", error.response.data);
 
@@ -140,44 +151,11 @@ const Users = (props) => {
     }
   };
 
-  const getUsers = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/users/`);
-      setUsers(response.data);
-    } catch (error) {
-      console.error("Cannot get users", error.response.data);
-      showErrorSnackbar("Cannot get users");
-    }
-  };
-
-  const getStations = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/stations/`);
-      setStations(response.data);
-    } catch (error) {
-      console.error(
-        "Cannot get stations, response error:",
-        error.response.data
-      );
-      showErrorSnackbar("Cannot get stations");
-    }
-  };
-
-  const getRoles = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/roles/`);
-      setRoles(response.data);
-    } catch (error) {
-      console.error("Cannot get roles, response error:", error.response.data);
-      showErrorSnackbar("Cannot get roles");
-    }
-  };
-
   React.useEffect(() => {
-    getUsers();
-    getStations();
-    getRoles();
-  }, [editUser]);
+    fetchUsers();
+    fetchRoles();
+    fetchStations();
+  }, []);
 
   return (
     <div>
@@ -283,11 +261,34 @@ const Users = (props) => {
 Users.propTypes = {
   showErrorSnackbar: PropTypes.func,
   showSuccessSnackbar: PropTypes.func,
+  fetchRoles: PropTypes.func,
+  fetchStations: PropTypes.func,
+  fetchUsers: PropTypes.func,
+  addUser: PropTypes.func,
+  deleteUser: PropTypes.func,
+  updateUser: PropTypes.func,
+  users: PropTypes.arrayOf(PropTypes.object),
+  roles: PropTypes.arrayOf(PropTypes.object),
+  stations: PropTypes.arrayOf(PropTypes.object),
+};
+
+const mapStateToProps = ({ user, station, role }) => {
+  return {
+    users: user.users,
+    roles: role.roles,
+    stations: station.stations,
+  };
 };
 
 const mapDispatchToProps = {
   showErrorSnackbar,
   showSuccessSnackbar,
+  fetchRoles,
+  fetchStations,
+  fetchUsers,
+  addUser,
+  deleteUser,
+  updateUser,
 };
 
-export default connect(null, mapDispatchToProps)(Users);
+export default connect(mapStateToProps, mapDispatchToProps)(Users);
