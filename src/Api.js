@@ -25,6 +25,23 @@ export function fetchStations() {
   return axios.get(`http://localhost:8080/stations/`);
 }
 
+export function addStation(name) {
+  return axios.post(`http://localhost:8080/stations/`, {
+    name: name,
+  });
+}
+
+export function deleteStation(id) {
+  return axios.delete(`http://localhost:8080/stations/${id}`);
+}
+
+export function updateStation(id, name) {
+  return axios.put(`http://localhost:8080/stations/`, {
+    id: id,
+    name: name,
+  });
+}
+
 export function fetchUsers() {
   return axios.get(`http://localhost:8080/users/`);
 }

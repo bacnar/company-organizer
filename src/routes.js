@@ -32,6 +32,7 @@ import NotificationsPage from "views/Notifications/Notifications.js";
 import UpgradeToPro from "views/UpgradeToPro/UpgradeToPro.js";
 import Users from "views/Users/Users.js";
 import Roles from "views/Roles/Roles.js";
+import Stations from "views/Stations/Stations.js";
 
 const dashboardRoutes = [
   {
@@ -53,6 +54,13 @@ const dashboardRoutes = [
     name: "Roles",
     icon: Person,
     component: Roles,
+    layout: "/admin",
+  },
+  {
+    path: "/stations",
+    name: "Stations",
+    icon: Person,
+    component: Stations,
     layout: "/admin",
   },
   {

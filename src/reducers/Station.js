@@ -21,6 +21,18 @@ export default (state = initState, action) => {
         ...state,
         stationsLoading: false,
       };
+    case "ADD_STATION":
+    case "ADD_STAION_SUCCESS":
+    case "ADD_STATION_FAIL":
+    case "DELETE_STATION":
+    case "DELETE_STATION_SUCCESS":
+    case "DELETE_STATION_FAIL":
+    case "UPDATE_STATION":
+    case "UPDATE_STATION_SUCCESS":
+    case "UPDATE_STATION_FAIL":
+      return {
+        ...state,
+      };
     default:
       return state;
   }
