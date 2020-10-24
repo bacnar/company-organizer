@@ -41,7 +41,7 @@ export default function CustomTable(props) {
                     key={key}
                     align="left"
                   >
-                    {prop}
+                    {prop.displayName}
                   </TableCell>
                 );
               })}
@@ -58,17 +58,17 @@ export default function CustomTable(props) {
           </TableHead>
         ) : null}
         <TableBody>
-          {tableData.map((prop, key) => {
+          {tableData.map((dataProp, dataKey) => {
             return (
-              <TableRow key={key} className={classes.tableBodyRow}>
-                {prop.map((prop, key) => {
+              <TableRow key={dataKey} className={classes.tableBodyRow}>
+                {tableHead.map((prop, key) => {
                   return (
                     <TableCell
                       className={classes.tableCell}
                       key={key}
                       style={capitalize}
                     >
-                      {prop.value}
+                      {dataProp[prop.field]}
                     </TableCell>
                   );
                 })}
@@ -76,8 +76,8 @@ export default function CustomTable(props) {
                   <EditTableActions
                     editItemCallBack={editItemCallBack}
                     deleteItemAction={deleteItemAction}
-                    editItem={prop}
-                    deleteItemId={prop[0].key}
+                    editItem={dataProp}
+                    deleteItemId={dataProp["id"]}
                   />
                 ) : null}
               </TableRow>
@@ -104,8 +104,10 @@ CustomTable.propTypes = {
     "rose",
     "gray",
   ]),
-  tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
+  tableHead: PropTypes.arrayOf(
+    PropTypes.objectOf({ displayName: PropTypes.any, field: PropTypes.any })
+  ),
+  tableData: PropTypes.arrayOf(PropTypes.object),
   actions: PropTypes.bool,
   editItemCallBack: PropTypes.func,
   deleteItemAction: PropTypes.func,

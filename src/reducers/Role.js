@@ -21,6 +21,18 @@ export default (state = initState, action) => {
         ...state,
         rolesLoading: false,
       };
+    case "ADD_ROLE":
+    case "ADD_ROLE_SUCCESS":
+    case "ADD_ROLE_FAIL":
+    case "DELETE_ROLE":
+    case "DELETE_ROLE_SUCCESS":
+    case "DELETE_ROLE_FAIL":
+    case "UPDATE_ROLE":
+    case "UPDATE_ROLE_SUCCESS":
+    case "UPDATE_ROLE_FAIL":
+      return {
+        ...state,
+      };
     default:
       return state;
   }

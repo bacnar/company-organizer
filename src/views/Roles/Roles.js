@@ -3,7 +3,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 // core components
 import GridItem from "components/Grid/GridItem.js";
-import UsersModal from "components/TablesModals/UsersModal.js";
+import RolesModal from "components/TablesModals/RolesModal.js";
 import Table from "components/Table/Table.js";
 import GridContainer from "components/Grid/GridContainer.js";
 import Card from "components/Card/Card.js";
@@ -16,31 +16,19 @@ import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
 import styles from "assets/jss/material-dashboard-react/views/userStyle.js";
 import PropTypes from "prop-types";
-import { fetchRoles } from "actions/Role";
-import { fetchStations } from "actions/Station";
-import { fetchUsers, addUser, deleteUser, updateUser } from "actions/User";
+import { fetchRoles, addRole, deleteRole, updateRole } from "actions/Role";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles(styles);
 
-const Users = (props) => {
+const Roles = (props) => {
   const classes = useStyles();
 
-  const {
-    fetchRoles,
-    fetchStations,
-    fetchUsers,
-    users,
-    roles,
-    stations,
-    addUser,
-    deleteUser,
-    updateUser,
-  } = props;
+  const { fetchRoles, roles, addRole, deleteRole, updateRole } = props;
 
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
-  const [editUser, setEditUser] = React.useState(null);
+  const [editRole, setEditRole] = React.useState(null);
 
   const closeModal = () => {
     setOpen(false);
@@ -51,14 +39,12 @@ const Users = (props) => {
   };
 
   const editItem = (item) => {
-    setEditUser(item);
+    setEditRole(item);
     setOpenEdit(true);
   };
 
   React.useEffect(() => {
-    fetchUsers();
     fetchRoles();
-    fetchStations();
   }, []);
 
   return (
@@ -69,9 +55,9 @@ const Users = (props) => {
             <CardHeader color="primary">
               <GridContainer justify="space-between">
                 <GridItem>
-                  <h4 className={classes.cardTitleWhite}>Users</h4>
+                  <h4 className={classes.cardTitleWhite}>Roles</h4>
                   <p className={classes.cardCategoryWhite}>
-                    Users of your company
+                    Roles for your company
                   </p>
                 </GridItem>
                 <GridItem>
@@ -92,15 +78,11 @@ const Users = (props) => {
                 tableHead={[
                   { displayName: "#", field: "id" },
                   { displayName: "Name", field: "name" },
-                  { displayName: "Station", field: "station_name" },
-                  { displayName: "Role", field: "role_name" },
-                  { displayName: "Email", field: "email" },
-                  { displayName: "Username", field: "username" },
                 ]}
-                tableData={users}
+                tableData={roles}
                 actions={true}
                 editItemCallBack={editItem}
-                deleteItemAction={deleteUser}
+                deleteItemAction={deleteRole}
               />
             </CardBody>
           </Card>
@@ -115,15 +97,13 @@ const Users = (props) => {
           timeout: 500,
         }}
         onClose={closeModal}
-        aria-labelledby="Add new user"
+        aria-labelledby="Add new Role"
       >
         <Fade in={open}>
-          <UsersModal
-            headerText="Add new user"
-            buttonText="Add user"
-            stationData={stations.map((value) => [value.id, value.name])}
-            roleData={roles.map((value) => [value.id, value.name])}
-            formSubmitAction={addUser}
+          <RolesModal
+            headerText="Add new role"
+            buttonText="Add role"
+            formSubmitAction={addRole}
             closeModal={closeModal}
           />
         </Fade>
@@ -140,13 +120,11 @@ const Users = (props) => {
         aria-labelledby="Add new user"
       >
         <Fade in={open}>
-          <UsersModal
-            headerText="Edit user"
+          <RolesModal
+            headerText="Edit role"
             buttonText="Save"
-            stationData={stations.map((value) => [value.id, value.name])}
-            roleData={roles.map((value) => [value.id, value.name])}
-            user={editUser != null ? editUser : null}
-            formSubmitAction={updateUser}
+            role={editRole != null ? editRole : null}
+            formSubmitAction={updateRole}
             closeModal={closeEditModal}
           />
         </Fade>
@@ -155,33 +133,25 @@ const Users = (props) => {
   );
 };
 
-Users.propTypes = {
+Roles.propTypes = {
   fetchRoles: PropTypes.func,
-  fetchStations: PropTypes.func,
-  fetchUsers: PropTypes.func,
-  addUser: PropTypes.func,
-  deleteUser: PropTypes.func,
-  updateUser: PropTypes.func,
-  users: PropTypes.arrayOf(PropTypes.object),
+  addRole: PropTypes.func,
+  deleteRole: PropTypes.func,
+  updateRole: PropTypes.func,
   roles: PropTypes.arrayOf(PropTypes.object),
-  stations: PropTypes.arrayOf(PropTypes.object),
 };
 
-const mapStateToProps = ({ user, station, role }) => {
+const mapStateToProps = ({ role }) => {
   return {
-    users: user.users,
     roles: role.roles,
-    stations: station.stations,
   };
 };
 
 const mapDispatchToProps = {
   fetchRoles,
-  fetchStations,
-  fetchUsers,
-  addUser,
-  deleteUser,
-  updateUser,
+  addRole,
+  deleteRole,
+  updateRole,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default connect(mapStateToProps, mapDispatchToProps)(Roles);

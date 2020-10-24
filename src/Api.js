@@ -4,6 +4,23 @@ export function fetchRoles() {
   return axios.get(`http://localhost:8080/roles/`);
 }
 
+export function addRole(name) {
+  return axios.post(`http://localhost:8080/roles/`, {
+    name: name,
+  });
+}
+
+export function deleteRole(id) {
+  return axios.delete(`http://localhost:8080/roles/${id}`);
+}
+
+export function updateRole(id, name) {
+  return axios.put(`http://localhost:8080/roles/`, {
+    id: id,
+    name: name,
+  });
+}
+
 export function fetchStations() {
   return axios.get(`http://localhost:8080/stations/`);
 }

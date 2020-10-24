@@ -28,12 +28,15 @@ const UsersModal = (props) => {
     formSubmitAction,
     user,
     showErrorSnackbar,
+    closeModal,
   } = props;
 
   const [name, setName] = React.useState(user === undefined ? "" : user.name);
-  const [role, setRole] = React.useState(user === undefined ? "" : user.roleId);
+  const [role, setRole] = React.useState(
+    user === undefined ? "" : user.role_id
+  );
   const [station, setStation] = React.useState(
-    user === undefined ? "" : user.stationId
+    user === undefined ? "" : user.station_id
   );
   const [username, setUsername] = React.useState(
     user === undefined ? "" : user.username
@@ -103,6 +106,7 @@ const UsersModal = (props) => {
     } else {
       if (user === undefined) {
         formSubmitAction(name, station, role, username, email, password);
+        closeModal();
       } else {
         formSubmitAction(
           user.id,
@@ -113,6 +117,7 @@ const UsersModal = (props) => {
           email,
           password
         );
+        closeModal();
       }
     }
   };
@@ -295,6 +300,7 @@ UsersModal.propTypes = {
   roleData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.any)),
   formSubmitAction: PropTypes.func,
   showErrorSnackbar: PropTypes.func,
+  closeModal: PropTypes.func,
 };
 
 const mapDispatchToProps = {
